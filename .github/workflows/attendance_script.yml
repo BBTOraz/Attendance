@@ -2,7 +2,7 @@ name: Run Attendance Script
 
 on:
   schedule:
-    - cron: '0 10 * * *'
+    - cron: '0 11 * * *'
 
 jobs:
   run-script:
@@ -18,8 +18,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
+        pip install -r script/requirements.txt
 
     - name: Run script
       run: |
-        python attendance_script.py
+        python script/attendance_script.py
