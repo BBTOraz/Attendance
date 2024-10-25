@@ -1,0 +1,5 @@
+gspread
+requests
+oauth2client
+pandas
+python-dateutil
