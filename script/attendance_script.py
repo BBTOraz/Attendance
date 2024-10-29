@@ -3,6 +3,8 @@ import requests
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 from datetime import datetime
+import requests
+from bs4 import BeautifulSoup
 import calendar
 
 
@@ -10,17 +12,56 @@ class AttendanceFetcher:
     def __init__(self, headers):
         self.headers = headers
         self.base_url = 'https://api.prod.yaya.kz'
+        self.session = requests.Session()  # Используем сессию для хранения куков
+
+    def get_csrf_session_token(self, username, password):
+        login_url = f'{self.base_url}/admin/login/?next=/admin/visits'
+        response = self.session.get(login_url)
+
+        if 'csrftoken' in self.session.cookies:
+            csrf_token = self.session.cookies['csrftoken']
+            print(f"Получен CSRF-токен: {csrf_token}")
+            login_data = {
+                'username': username,
+                'password': password,
+                'csrfmiddlewaretoken': csrf_token
+            }
+
+            headers = {
+                'Cookie': f'csrftoken={csrf_token}',
+                'Referer': login_url,
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
+            }
+            auth_response = self.session.post(login_url, data=login_data, headers=headers)
+            if auth_response.status_code == 200 and 'sessionid' in self.session.cookies:
+                print("Успешная авторизация")
+                return True
+            else:
+                print(f"Ошибка авторизации: {auth_response.status_code}")
+                return False
+        else:
+            print("Не удалось получить CSRF-токен из куков")
+            return False
 
     def fetch_visits(self, date):
         visits_url = f'{self.base_url}/admin/visit/load_all_visits/?center_id=819&date={date}&lesson_ids=%5B%222093%22%2C%222092%22%2C%222091%22%5D&lesson_colors=%7B%222091%22%3A%22%23376FFF%22%2C%222092%22%3A%22%234DB4FF%22%2C%222093%22%3A%22%23293A78%22%7D'
-        response = requests.get(visits_url, headers=self.headers)
+        response = self.session.get(visits_url, headers=self.headers)
         if response.status_code == 200:
-            print("Данные о посещенных и пропустивших детей получены")
-            return response.json()
+            try:
+                return response.json()
+            except requests.exceptions.JSONDecodeError as e:
+                print(f"Ошибка JSONDecodeError: {e}")
+                print("Ответ от API:", response.text)
         else:
-            raise Exception(f"Ошибка получения данных: {response.status_code}")
+            print(f"Ошибка: Код ответа {response.status_code}")
+            print("Ответ от API:", response.text)
+        return None
 
     def process_data(self, visits_data):
+        if visits_data is None:
+            print("Данные отсутствуют или произошла ошибка при запросе.")
+            return []
+
         visited = visits_data.get('APPROVED', [])
         missed = visits_data.get('MISSED', [])
 
@@ -28,7 +69,8 @@ class AttendanceFetcher:
             {
                 'Имя': f"{visit['first_name']} {visit['last_name']}",
                 'Дата рождения': visit['birthday'],
-                'Время': datetime.strptime(visit['start_time'].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z').strftime('%d.%m'),
+                'Время': datetime.strptime(visit['start_time'].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z').strftime(
+                    '%d.%m'),
                 'Центр': 'Robocode',
                 'Занятие': visit['lesson'],
                 'Статус': 'V'
@@ -40,7 +82,8 @@ class AttendanceFetcher:
             {
                 'Имя': f"{visit['first_name']} {visit['last_name']}",
                 'Дата рождения': visit['birthday'],
-                'Время': datetime.strptime(visit['start_time'].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z').strftime('%d.%m'),
+                'Время': datetime.strptime(visit['start_time'].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z').strftime(
+                    '%d.%m'),
                 'Центр': 'Robocode',
                 'Занятие': visit['lesson'],
                 'Статус': ''
@@ -104,19 +147,19 @@ class GoogleSheetUpdater:
             df = pd.DataFrame(data)
             values = df.values.tolist()
             cell_range = f'C{next_filled_row}'
-            worksheet.update(range_name = cell_range, values= values)
+            worksheet.update(range_name=cell_range, values=values)
             print("Данные успешно загружены в Google Sheets.")
 
 
-
 if __name__ == "__main__":
+    username = "7074224239"
+    password = "Je1FrzknSm"
+
     headers = {
         'Accept': '*/*',
         'Accept-Encoding': 'gzip, deflate, br, zstd',
         'Accept-Language': 'ru-RU,ru;q=0.9',
         'Connection': 'keep-alive',
-        'Cookie': 'csrftoken=mAc2ODoelycA7eKhzNA87AHQ6mdVSWlB; sessionid=xwlm1zmfof4ash1br7vbpbeo5qexragk; _ym_uid=1725176406842436676; _ym_d=1728923088; _ym_isad=1; _ym_visorc=w',
-        'Host': 'api.prod.yaya.kz',
         'Referer': 'https://api.prod.yaya.kz/admin/visits/',
         'Sec-Fetch-Dest': 'empty',
         'Sec-Fetch-Mode': 'cors',
@@ -127,15 +170,17 @@ if __name__ == "__main__":
         'sec-ch-ua-platform': '"Windows"'
     }
 
-    credentials_file = 'script/config/spreadsheet.json'
+    # Файл с учетными данными для Google Sheets
+    credentials_file = r'C:\Users\Tao\PycharmProjects\attendance-script\script\config\spreadsheet.json'
     spreadsheet_url = "https://docs.google.com/spreadsheets/d/1SXfpTJ2TJglApMAKGf6u-x_8q_p9zQdfAm2QlmDNZd4/edit#gid=143358604"
 
     attendance_fetcher = AttendanceFetcher(headers)
-    google_sheet_updater = GoogleSheetUpdater(credentials_file, spreadsheet_url)
 
-    today_date = datetime.today().strftime('%Y-%m-%d')
-    visits_data = attendance_fetcher.fetch_visits(today_date)
-    processed_data = attendance_fetcher.process_data(visits_data)
+    if attendance_fetcher.get_csrf_session_token(username, password):
+        today_date = datetime.today().strftime('%Y-%m-%d')
+        visits_data = attendance_fetcher.fetch_visits(today_date)
+        processed_data = attendance_fetcher.process_data(visits_data)
 
-    worksheet = google_sheet_updater.get_worksheet()
-    google_sheet_updater.update_sheet(worksheet, processed_data)
+        google_sheet_updater = GoogleSheetUpdater(credentials_file, spreadsheet_url)
+        worksheet = google_sheet_updater.get_worksheet()
+        google_sheet_updater.update_sheet(worksheet, processed_data)
