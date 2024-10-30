@@ -1,10 +1,8 @@
 import gspread
-import requests
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 from datetime import datetime
 import requests
-from bs4 import BeautifulSoup
 import calendar
 
 
