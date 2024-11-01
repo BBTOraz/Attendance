@@ -169,7 +169,7 @@ if __name__ == "__main__":
     }
 
     # Файл с учетными данными для Google Sheets
-    credentials_file = r'C:\Users\Tao\PycharmProjects\attendance-script\script\config\spreadsheet.json'
+    credentials_file = 'script/config/spreadsheet.json'
     spreadsheet_url = "https://docs.google.com/spreadsheets/d/1SXfpTJ2TJglApMAKGf6u-x_8q_p9zQdfAm2QlmDNZd4/edit#gid=143358604"
 
     attendance_fetcher = AttendanceFetcher(headers)
