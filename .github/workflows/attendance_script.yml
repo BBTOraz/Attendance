@@ -2,7 +2,7 @@ name: Run Attendance Script
 
 on:
   schedule:
-    - cron: '20 20 * * *'
+    - cron: '00 13 * * *'
 
 jobs:
   run-script:
