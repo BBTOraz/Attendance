@@ -1,4 +1,4 @@
 # created by virtualenv automatically
 .venv
 .env
-script/config/spreadsheet.json
+/script/config/spreadsheet.json
