@@ -3,3 +3,6 @@ requests
 oauth2client
 pandas
 python-dateutil
+python-dotenv
+Telethon
+cachetools
