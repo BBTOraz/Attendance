@@ -36,7 +36,7 @@ jobs:
       - name: Create spreadsheet.json file
         run: |
           mkdir -p config
-          echo "${{ env.SPREADSHEET_JSON_CONTENT }}" > config/spreadsheet.json
+          echo "${{ env.SPREADSHEET_JSON_CONTENT }}" | base64 -d > config/spreadsheet.json
 
       - name: Run script
         run: |
