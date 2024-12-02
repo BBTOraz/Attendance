@@ -1,5 +1,3 @@
-# main.py
-
 import asyncio
 from datetime import datetime, time as dt_time, timedelta
 from attendance_fetcher import AttendanceFetcher
@@ -15,7 +13,7 @@ async def main():
     base_url = "https://api.prod.yaya.kz"
     headers = {"User-Agent": "Mozilla/5.0"}
 
-
+    print()
     attendance_fetcher = AttendanceFetcher(base_url, headers)
     google_sheet_updater = GoogleSheetUpdater(credentials_file, spreadsheet_url)
 
@@ -33,7 +31,7 @@ async def main():
             google_sheet_updater.update_sheet(worksheet, processed_data)
 
             approved_visits = attendance_fetcher.get_approved_visits(visits_data)
-            # Реализуйте get_sent_messages() и add_sent_message() в вашем google_sheet_updater.py
+
             sent_messages = google_sheet_updater.get_sent_messages()
             async with TelegramNotifier(
                 telegram_api_id, telegram_api_hash,
