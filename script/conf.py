@@ -1,7 +1,8 @@
 import os
-from dotenv import load_dotenv
+'''from dotenv import load_dotenv'''
 
-load_dotenv()
+
+'''load_dotenv()'''
 
 username = os.getenv('YAYA_USERNAME')
 password = os.getenv("PASSWORD")
