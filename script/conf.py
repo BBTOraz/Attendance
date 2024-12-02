@@ -4,14 +4,23 @@ import os
 
 '''load_dotenv()'''
 
-username = os.getenv('YAYA_USERNAME')
+username = os.environ['YAYA_USERNAME']
+password = os.environ["PASSWORD"]
+credentials_file = os.environ["CREDENTIALS_FILE"]
+spreadsheet_url = os.environ["SPREADSHEET_URL"]
+telegram_api_id = os.environ["TELEGRAM_API_ID"]
+telegram_api_hash = os.environ["TELEGRAM_API_HASH"]
+telegram_bot_token = os.environ['TELEGRAM_BOT_TOKEN']
+telegram_chat_id = int(os.environ['TELEGRAM_CHAT_ID'])
+
+'''username = os.getenv('YAYA_USERNAME')
 password = os.getenv("PASSWORD")
 credentials_file = os.getenv("CREDENTIALS_FILE")
 spreadsheet_url = os.getenv("SPREADSHEET_URL")
 telegram_api_id = os.getenv("TELEGRAM_API_ID")
 telegram_api_hash = os.getenv("TELEGRAM_API_HASH")
 telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
-telegram_chat_id = int(os.getenv('TELEGRAM_CHAT_ID'))
+telegram_chat_id = int(os.getenv('TELEGRAM_CHAT_ID'))'''
 
 print("USERNAME:", username)
 print("PASSWORD:", password)

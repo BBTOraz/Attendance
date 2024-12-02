@@ -25,7 +25,7 @@ jobs:
 
       - name: Set up environment variables
         env:
-          USERNAME: ${{ secrets.YAYA_USERNAME }}
+          YAYA_USERNAME: ${{ secrets.YAYA_USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
           CREDENTIALS_FILE: ${{ secrets.CREDENTIALS_FILE }}
           SPREADSHEET_URL: ${{ secrets.SPREADSHEET_URL }}
