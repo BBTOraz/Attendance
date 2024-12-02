@@ -7,13 +7,24 @@ from conf import (
     telegram_api_id, telegram_api_hash, telegram_bot_token,
     telegram_chat_id, username, password
 )
+import json
 from telegram_notifier import TelegramNotifier
 
 async def main():
     base_url = "https://api.prod.yaya.kz"
     headers = {"User-Agent": "Mozilla/5.0"}
 
-    print()
+    with open(credentials_file, "r", encoding="utf-8") as f:
+        credentials_data = json.load(f)
+
+    if "private_key" in credentials_data:
+        credentials_data["private_key"] = credentials_data["private_key"].replace("\\n", "\n")
+
+    with open(credentials_file, "w", encoding="utf-8") as f:
+        json.dump(credentials_data, f, ensure_ascii=False, indent=4)
+
+    print("Исправленный private_key сохранён.")
+
     attendance_fetcher = AttendanceFetcher(base_url, headers)
     google_sheet_updater = GoogleSheetUpdater(credentials_file, spreadsheet_url)
 
