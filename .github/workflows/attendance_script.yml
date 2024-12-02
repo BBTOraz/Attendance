@@ -8,6 +8,16 @@ on:
 jobs:
   run-script:
     runs-on: ubuntu-latest
+    env:
+      YAYA_USERNAME: ${{ secrets.YAYA_USERNAME }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+      CREDENTIALS_FILE: ${{ secrets.CREDENTIALS_FILE }}
+      SPREADSHEET_URL: ${{ secrets.SPREADSHEET_URL }}
+      TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+      TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      SPREADSHEET_JSON_CONTENT: ${{ secrets.SPREADSHEET_JSON_CONTENT }}
 
     steps:
       - name: Checkout repository
@@ -23,24 +33,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r script/requirements.txt
 
-      - name: Set up environment variables
-        env:
-          YAYA_USERNAME: ${{ secrets.YAYA_USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          CREDENTIALS_FILE: ${{ secrets.CREDENTIALS_FILE }}
-          SPREADSHEET_URL: ${{ secrets.SPREADSHEET_URL }}
-          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
-          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: |
-          echo "Environment variables set"
-
       - name: Create spreadsheet.json file
         run: |
           mkdir -p config
-          echo "${{ secrets.SPREADSHEET_JSON_CONTENT }}" > config/spreadsheet.json
-
+          echo "${{ env.SPREADSHEET_JSON_CONTENT }}" > config/spreadsheet.json
 
       - name: Run script
         run: |
