@@ -1,16 +1,17 @@
 # main.py
 
 import os
-from dotenv import load_dotenv
 from datetime import datetime, time as dt_time, timedelta
 from attendance_fetcher import AttendanceFetcher
 from google_sheet_updater import GoogleSheetUpdater
-from script.conf import credentials_file, spreadsheet_url, telegram_api_id, telegram_api_hash, telegram_bot_token, \
+from conf import (
+    credentials_file, spreadsheet_url,
+    telegram_api_id, telegram_api_hash, telegram_bot_token,
     telegram_chat_id, username, password
+)
 from telegram_notifier import TelegramNotifier
 import asyncio
 
-load_dotenv()
 
 async def main():
     base_url = "https://api.prod.yaya.kz"
