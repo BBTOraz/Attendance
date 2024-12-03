@@ -2,8 +2,8 @@ name: Run Attendance Script
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Запуск каждые 5 минут
-  workflow_dispatch:        # Возможность ручного запуска из интерфейса GitHub
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
 
 jobs:
   run-script:
@@ -50,11 +50,10 @@ jobs:
           with open('config/spreadsheet.json', 'r', encoding='utf-8-sig') as f:
               try:
                   data = json.load(f)
-                  print('JSON is valid. Keys:', list(data.keys()))
+                  print('JSON is valid. Keys:', '***')
               except json.JSONDecodeError as e:
                   print('JSONDecodeError:', e)
           "
-
       - name: Run script
         run: |
           python script/main.py
