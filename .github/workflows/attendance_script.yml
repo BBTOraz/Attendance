@@ -38,8 +38,13 @@ jobs:
 
       - name: Create sheetsAPI.json file
         run: |
+          if [ ! -x "$(command -v jq)" ]; then
+            echo "jq not found, installing..."
+            sudo apt-get update
+            sudo apt-get install -y jq
+          fi
           mkdir -p config
-          echo "${{ env.SPREADSHEET_JSON_BASE64 }}" | base64 -decode | jq > config/sheetsAPI.json
+          echo "${{ env.SPREADSHEET_JSON_BASE64 }}" | base64 -d | jq > config/sheetsAPI.json
       - name: Run script
         run: |
           python script/main.py
