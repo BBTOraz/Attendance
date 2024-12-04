@@ -39,21 +39,7 @@ jobs:
       - name: Create sheetsAPI.json file
         run: |
           mkdir -p config
-          echo "${{ env.SPREADSHEET_JSON_BASE64 }}" | base64 -d > config/spreadsheet.json
-          echo "Decoded file content:"
-          cat config/spreadsheet.json
-          echo "File encoding:"
-          file config/spreadsheet.json
-          hexdump -C config/spreadsheet.json | head -n 10
-          python -c "
-          import json
-          with open('config/spreadsheet.json', 'r', encoding='utf-8-sig') as f:
-              try:
-                  data = json.load(f)
-                  print('JSON is valid. Keys:', '***')
-              except json.JSONDecodeError as e:
-                  print('JSONDecodeError:', e)
-          "
+          echo "${{ env.SPREADSHEET_JSON_BASE64 }}" | base64 -d > config/sheetsAPI.json
       - name: Run script
         run: |
           python script/main.py
