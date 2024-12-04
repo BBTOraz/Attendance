@@ -25,6 +25,7 @@ async def main():
         return
 
     now = datetime.now()
+    print(now)
     if dt_time(10, 0) <= now.time() <= dt_time(18, 0):
         today_date = now.strftime('%Y-%m-%d')
         visits_data = attendance_fetcher.fetch_visits(today_date)
