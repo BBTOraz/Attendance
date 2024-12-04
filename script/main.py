@@ -24,7 +24,7 @@ async def main():
         print("Не удалось авторизоваться")
         return
 
-    now = datetime.now()
+    now = datetime.now() + timedelta(hours=5)
     print(now)
     if dt_time(10, 0) <= now.time() <= dt_time(18, 0):
         today_date = now.strftime('%Y-%m-%d')
