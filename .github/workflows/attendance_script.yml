@@ -11,7 +11,7 @@ jobs:
     env:
       YAYA_USERNAME: ${{ secrets.YAYA_USERNAME }}
       PASSWORD: ${{ secrets.PASSWORD }}
-      CREDENTIALS_FILE: 'config/spreadsheet.json'
+      CREDENTIALS_FILE: 'config/sheetsAPI.json'
       SPREADSHEET_URL: ${{ secrets.SPREADSHEET_URL }}
       TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
       TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
@@ -36,7 +36,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r script/requirements.txt
 
-      - name: Create spreadsheet.json file
+      - name: Create sheetsAPI.json file
         run: |
           mkdir -p config
           echo "${{ env.SPREADSHEET_JSON_BASE64 }}" | base64 -d > config/spreadsheet.json

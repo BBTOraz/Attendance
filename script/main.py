@@ -17,12 +17,6 @@ async def main():
     base_url = "https://api.prod.yaya.kz"
     headers = {"User-Agent": "Mozilla/5.0"}
 
-    try:
-        creds = Credentials.from_service_account_file("config/spreadsheet.json")
-        print("Авторизация успешна.")
-    except Exception as e:
-        print(f"Ошибка авторизации: {e}")
-
     attendance_fetcher = AttendanceFetcher(base_url, headers)
     google_sheet_updater = GoogleSheetUpdater(credentials_file, spreadsheet_url)
 
@@ -31,7 +25,7 @@ async def main():
         return
 
     now = datetime.now()
-    if dt_time(10, 0) <= now.time() <= dt_time(23, 59):
+    if dt_time(10, 0) <= now.time() <= dt_time(18, 0):
         today_date = now.strftime('%Y-%m-%d')
         visits_data = attendance_fetcher.fetch_visits(today_date)
         if visits_data:
